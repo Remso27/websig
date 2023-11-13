@@ -47,7 +47,7 @@
             <!-- Barre de recherche à droite -->
             <form action="{% url 'RestotelMap:search_view' %}" method="GET" class="d-flex">
                 <input class="form-control me-2" type="search" placeholder="Rechercher" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Recherche</button>
+                <button class="btn btn-outline-success fst-italic" type="submit">Recherche</button>
             </form>
         </div>
     </nav>
@@ -89,12 +89,37 @@
           zoom: 7,
           minZoom: 2 // Définir le niveau minimum de zoom
       });
-    
+  
       // Ajouter une couche de tuiles (par exemple, OpenStreetMap)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      var osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '© OpenStreetMap contributors'
       }).addTo(map);
-    
+  
+      // Ajouter une couche de tuiles Topography
+      var topographyLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenTopoMap contributors'
+      });
+  
+      // Ajouter une couche de tuiles Esri
+      var esriLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '© Esri'
+      });
+  
+      
+      // Ajouter une couche de tuiles USGS
+      var usgsLayer = L.tileLayer('http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: '© USGS'
+      });
+  
+      // Ajouter le contrôle des couches pour basculer entre les différentes couches
+      L.control.layers({
+          'OSM': osmLayer,
+          'Usgs': usgsLayer,
+          'Topography': topographyLayer,
+          'Esri': esriLayer
+          
+      }).addTo(map);
+  
       // Vérifier si un résultat de recherche est présent avant d'ajouter un marqueur
       {% if result %}
           // Ajouter un marqueur pour le résultat de recherche avec une taille personnalisée
@@ -111,8 +136,10 @@
           // Aucun résultat trouvé, afficher un message approprié
           L.marker([0, 0]).bindPopup("<span class='popup-text'>Aucun résultat trouvé pour la recherche '{{ query }}'</span>").addTo(map);
       {% endif %}
-    </script>
-    
+  
+      // Ajouter le texte "Design by KRG" en bas de la carte à droite
+      map.attributionControl.addAttribution('Designed by RKG');
+  </script>
 </body>
 
 </html>

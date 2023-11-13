@@ -2040,7 +2040,7 @@ section {
 #footer {
   color: #b4aca8;
   font-size: 14px;
-  background: #14100f;
+  background: hsl(156, 14%, 85%);
 }
 
 #footer .footer-top {
@@ -2168,7 +2168,8 @@ section {
 #footer .credits {
   padding-top: 5px;
   font-size: 13px;
-  color: #b4aca8;
+  color: #030303;
+  font-style: italic;
 }
 
 #footer .social-links a {
@@ -2199,3 +2200,17 @@ section {
 .popup-text {
   font-style: italic;
 }
+
+::-webkit-input-placeholder {
+  font-style: italic;
+}
+/*
+.leaflet-control-layers {
+  max-width: 50px; /* Ajustez la largeur maximale selon vos préférences 
+  max-height: 50px;
+  background-color: rgba(255, 255, 255, 0.8); /* Ajoutez une couleur de fond si nécessaire 
+  border: 1px solid #ddd;  Ajoutez une bordure si nécessaire 
+  border-radius: 5px; /* Ajoutez une bordure arrondie si nécessaire 
+  padding: 5px; /* Ajoutez un espace intérieur si nécessaire 
+}
+*/

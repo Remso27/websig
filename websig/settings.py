@@ -135,11 +135,10 @@ USE_TZ = True
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 STATIC_URL = 'static/'
-"""
+
 LEAFLET_CONFIG = {
-    'DEFAULT_CENTER': (5.342910 ,-3.987703),
-    #'DEFAULT_CENTER': (7.880295 , 5.660845),
-    'DEFAULT_ZOOM': 18,
+    'DEFAULT_CENTER': (7.54, -5.5471),
+    'DEFAULT_ZOOM': 5,
     'MAX_ZOOM': 40,
     'MIN_ZOOM': 15,
     'SCALE': 'both',
@@ -150,11 +149,11 @@ LEAFLET_CONFIG = {
           
           ],
     
-    'OVERLAYS': [('Suburbs', 'https://citymaps.capetown.gov.za/agsext1/rest/services/Theme_Based/EGISViewer/MapServer/76/query?outFields=*&where=1%3D1', {'attribution': '&copy; IGN'}),
-                 ('Dams', 'http://server/a/{z}/{x}/{y}.png', {'attribution': '&copy; IGN'})]
+    #'OVERLAYS': [('Suburbs', 'https://citymaps.capetown.gov.za/agsext1/rest/services/Theme_Based/EGISViewer/MapServer/76/query?outFields=*&where=1%3D1', {'attribution': '&copy; IGN'}),
+    #             ('Dams', 'http://server/a/{z}/{x}/{y}.png', {'attribution': '&copy; IGN'})]
 
 }
-"""
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
