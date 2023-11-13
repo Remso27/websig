@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import posixpath
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3s^gtt@wt_egen)z&xj60m(j%)t6kr8=y&2s9%&+2oj90%wlj3'
+SECRET_KEY = 'django-insecure--4i@i@y1w5yvpv)9oyj5^pvshz51aqo&q#@d=(f#8wdk)j00*-'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -31,13 +33,20 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'StatAgri',
+    'django.contrib.gis',
+    'RestotelMap',
+    'folium',
+    'geopandas',
+    'shapely',
+    'leaflet',
+    #'geojson',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +64,9 @@ ROOT_URLCONF = 'websig.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+                os.path.join(BASE_DIR, 'app/templates')
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -76,11 +87,17 @@ WSGI_APPLICATION = 'websig.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'RestotelMap',
+        'USER' : 'postgres',
+        'PASSWORD' : 'remso2710',
+        'HOST' : 'localhost',
+        'PORT' : '5432'
     }
 }
 
+GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c'
+GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal307'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -115,10 +132,62 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 STATIC_URL = 'static/'
+"""
+LEAFLET_CONFIG = {
+    'DEFAULT_CENTER': (5.342910 ,-3.987703),
+    #'DEFAULT_CENTER': (7.880295 , 5.660845),
+    'DEFAULT_ZOOM': 18,
+    'MAX_ZOOM': 40,
+    'MIN_ZOOM': 15,
+    'SCALE': 'both',
+    'ATTRIBUTION_PREFIX': "Powered by RKG'",
+     'TILES': [('OSM', 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>', 'maxZoom': 20}),
+          ('USGS', 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {'attribution': 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS', 'maxZoom': 20}),
+          ('Cartodb', 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {'attribution':'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>', 'maxZoom': 20})
+          
+          ],
+    
+    'OVERLAYS': [('Suburbs', 'https://citymaps.capetown.gov.za/agsext1/rest/services/Theme_Based/EGISViewer/MapServer/76/query?outFields=*&where=1%3D1', {'attribution': '&copy; IGN'}),
+                 ('Dams', 'http://server/a/{z}/{x}/{y}.png', {'attribution': '&copy; IGN'})]
+
+}
+"""
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+JAZZMIN_SETTINGS = {
+    #"show_ui_builder":True,
+    "site_header": "RestotelMap",
+    "welcome_sign": "ADMINISTRATION",
+    "site_logo": "assets/img/logo.png",
+    "login_logo": "assets/img/logo.png",
+    "copyright": "RestotelMap",
+    "topmenu_links": [
+
+        # Url that gets reversed (Permissions can be added)
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+
+        # external url that opens in a new window (Permissions can be added)
+        #{"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+
+        # model admin to link to (Permissions checked against model)
+        {"model": "auth.User"},
+
+        # App with dropdown menu to all its models pages (Permissions checked against models)
+        {"app": "books"},
+    ],
+    #"search_model": ["auth.User"],
+     "hide_apps": [],
+     "related_modal_active": True,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "simplex",
+}

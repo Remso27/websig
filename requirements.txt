@@ -3,3 +3,6 @@ psycopg2==2.9.5
 folium===0.14.0
 geopandas==0.14.0
 shapely==2.0.1
+django-leaflet==0.29.0
+django-geojson==4.0.0
+django-jazzmin==2.6.0
