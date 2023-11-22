@@ -6,3 +6,4 @@ shapely==2.0.1
 django-leaflet==0.29.0
 django-geojson==4.0.0
 django-jazzmin==2.6.0
+django-import-export==3.3.3
