@@ -33,7 +33,7 @@
     <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
 </head>
 
-<body>
+<body {% if no_results %} class="no-results"{% endif %}>
     <!-- Barre de navigation avec barre de recherche et logo -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -46,14 +46,17 @@
             </a>
             <!-- Barre de recherche à droite -->
             <form action="{% url 'RestotelMap:search_view' %}" method="GET" class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Rechercher" aria-label="Search">
+                <input class="form-control me-2" type="search" name="q" placeholder="Rechercher" aria-label="Search">
                 <button class="btn btn-outline-success fst-italic" type="submit">Recherche</button>
             </form>
         </div>
     </nav>
-
+    <!-- Aucun résultat trouvé pour la recherche -->
+    <div id="no-results" class="alert alert-warning mt-3" role="alert" style="display: none;">
+        Aucun résultat trouvé pour la recherche {{query}} <span id="query"></span>
+    </div>
     <!-- Carte Leaflet -->
-    <div id="map" style="height: 535px;"></div>
+    <div id="map" style="height: 580px;"></div>
     
 
     <!-- ======= Footer ======= -->
@@ -83,6 +86,21 @@
     <!-- Template Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
     <script>
+        // Fonction pour afficher/masquer la section "Aucun résultat trouvé pour la recherche"
+        function toggleNoResults() {
+            var noResultsSection = document.getElementById('no-results');
+            var body = document.body;
+
+            if (body.classList.contains('no-results')) {
+                noResultsSection.style.display = 'block';
+            } else {
+                noResultsSection.style.display = 'none';
+            }
+        }
+
+        // Appeler la fonction lors du chargement de la page
+        window.onload = toggleNoResults;
+
       // Initialiser la carte sur la Côte d'Ivoire avec un niveau minimum de zoom
       var map = L.map('map', {
           center: [7.54, -5.5471],
@@ -120,24 +138,30 @@
           
       }).addTo(map);
   
-      // Vérifier si un résultat de recherche est présent avant d'ajouter un marqueur
-      {% if result %}
-          // Ajouter un marqueur pour le résultat de recherche avec une taille personnalisée
-          var marker = L.marker([{{ result.latitude }}, {{ result.longitude }}], {
-              icon: L.divIcon({
-                  className: 'custom-marker',
-                  html: '<i class="fas fa-map-marker-alt marker-blue"></i>',  // Utiliser une classe pour la couleur
-                  iconSize: [30, 30]  // Définissez la taille de l'icône personnalisée
-              })
-          }).bindPopup("<span class='popup-text'>Nom: <em>{{ result.nom }}</em> <br>Catégorie: <em>{{ result.catego }}</em> <br>Téléphone: <em>{{ result.telephone }}</em><br>Ville: <em>{{ result.local }}</em> </em><br>Commune: <em>{{ result.local.commune }}</em></em><br>Quartier: <em>{{ result.local.quartier }}</em></span>", {
-              closeButton: false // Pour désactiver le bouton de fermeture
-          }).addTo(map);
-      {% else %}
-          // Aucun résultat trouvé, afficher un message approprié
-          L.marker([0, 0]).bindPopup("<span class='popup-text'>Aucun résultat trouvé pour la recherche '{{ query }}'</span>").addTo(map);
-      {% endif %}
-  
-      // Ajouter le texte "Design by KRG" en bas de la carte à droite
+      // ... affichage des resultats
+    {% for result in results %}
+    var marker = L.marker([{{ result.latitude }}, {{ result.longitude }}], {
+        icon: L.divIcon({
+            className: 'custom-marker',
+            html: '<i class="fas fa-map-marker-alt marker-blue"></i>',  // Utiliser une classe pour la couleur
+            iconSize: [30, 30]  // Définissez la taille de l'icône personnalisée
+        })
+    })
+    var popupContent = "<span class='popup-text'>Nom: <em>{{ result.nom }}</em> <br>Catégorie: <em>{{ result.catego }}</em> <br>Téléphone: <em>{{ result.telephone }}</em><br>Ville: <em>{{ result.local }}</em> </em><br>Commune: <em>{{ result.local.commune }}</em></em><br>Quartier: <em>{{ result.local.quartier }}</em></span>"
+    // Créer le Popup avec un décalage vers le haut (offset y) pour le positionner au-dessus du marqueur
+    var popup = L.popup({
+        closeButton: false,
+        offset: L.point(-10, -10)  // Ajustez cette valeur pour définir le décalage
+    }).setLatLng([{{ result.latitude }}, {{ result.longitude }}]).setContent(popupContent)
+    // Ajouter le Popup au marqueur
+    marker.bindPopup(popup)
+    // Ajouter le marqueur à la carte
+    marker.addTo(map);
+    // Ouvrir automatiquement le Popup du marqueur
+    marker.openPopup();
+    {% endfor %}
+
+    // Ajouter le texte "Design by KRG" en bas de la carte à droite
       map.attributionControl.addAttribution('Designed by RKG');
   </script>
 </body>

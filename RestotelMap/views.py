@@ -37,19 +37,24 @@ def index(request):
 def search_view(request):
     query = request.GET.get('q', '')
     
-    # Utilisez .first() pour obtenir le premier résultat trouvé
-    result = Etab.objects.filter(
+    # Utilisez .filter() pour obtenir tous les résultats correspondants à la requête
+    results = Etab.objects.filter(
         Q(nom__icontains=query) |
         Q(local__ville__icontains=query) |
         Q(local__commune__icontains=query) |
         Q(local__quartier__icontains=query)
-    ).first()
+    )
 
     # Convertir les coordonnées de la forme (7,04954 -3,9794224) en (7.04954, -3.9794224)
-    if result:
+    for result in results:
         result.latitude = str(result.latitude).replace(',', '.')
         result.longitude = str(result.longitude).replace(',', '.')
 
-    context = {'result': result, 'query': query}
+    context = {'results': results, 'query': query}
+    
+    # Ajouter une classe au corps du document pour indiquer qu'aucun résultat n'a été trouvé
+    if not results:
+        context['no_results'] = True
+
     return render(request, 'app/index.html', context)
 
